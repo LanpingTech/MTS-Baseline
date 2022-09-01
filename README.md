@@ -6,11 +6,9 @@
 
 **在预处理阶段，TST采用MSE作为损失函数对模型进行训练。TST可以作为我们的对比算法，下游任务可以改为聚类，数据集使用的是同样的UEA数据集。对比侧重点：模型结构**
 
-## 2. Unsupervised representation learning for time series with temporal neighborhood coding (TNC ICLR'21)
+## 2-TNC. Unsupervised representation learning for time series with temporal neighborhood coding (ICLR'21)
 
-时间序列通常复杂且信息丰富，但标签稀疏，因此难以建模。在本文中，我们提出了一种自我监督框架，用于学习非平稳时间序列的可泛化表示。我们的方法称为时间邻域编码 (TNC)，它利用信号生成过程的局部平滑性来及时定义具有固定属性的邻域。使用去偏对比目标，我们的框架通过确保在编码空间中，来自邻域内的信号分布与非邻域信号的分布是可区分的来学习时间序列表示。我们的动机源于医学领域，在医学领域，对时间序列数据的动态性质进行建模的能力对于在几乎不可能标记数据的环境中识别、跟踪和预测潜在患者的潜在状态特别有价值。我们将我们的方法与最近开发的无监督表示学习方法进行比较，并展示了在多个数据集的聚类和分类任务上的卓越性能。
-
-代码链接：https://github.com/sanatonek/TNC_representation_learning
+源码链接：https://github.com/sanatonek/TNC_representation_learning
 
 **TNC在训练时，可以无监督训练模型。损失函数是修改后的Triplet Loss。对比侧重点：正负样本采样策略**
 
