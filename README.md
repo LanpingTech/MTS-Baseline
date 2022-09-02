@@ -4,6 +4,8 @@
 
 源码链接：https://github.com/gzerveas/mvts_transformer
 
+本项目地址：[1-TST](TST/)
+
 **未完成**
 
 ## 2-TNC. Unsupervised representation learning for time series with temporal neighborhood coding (ICLR'21)
@@ -12,19 +14,17 @@
 
 **Config 未完成**
 
-## 3-TSTCC. Time-Series Representation Learning via Temporal and Contextual Contrasting (TS-TCC IJCAI'21)
+## 3-TSTCC. Time-Series Representation Learning via Temporal and Contextual Contrasting (IJCAI'21)
 
 代码链接：https://github.com/emadeldeen24/TS-TCC
 
 **已完成**
 
-## 4. ReTriM: Reconstructive Triplet Loss for Learning Reduced Embeddings for Multi-Variate Time Series (ReTriM ICDMW'21)
+## 4. ReTriM: Reconstructive Triplet Loss for Learning Reduced Embeddings for Multi-Variate Time Series (ICDMW'21)
 
 代码链接：无
 
 **已完成**
-
-**虽然下游任务是分类，但是模型在训练过程中是无监督的。对比侧重点：模型结构 + 正负样本采样策略 + 损失函数**
 
 ## 5. TS2Vec: Towards universal representation of time series (TS2Vec AAAI'22)
 
