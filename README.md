@@ -4,25 +4,25 @@
 
 源码链接：https://github.com/gzerveas/mvts_transformer
 
-**在预处理阶段，TST采用MSE作为损失函数对模型进行训练。TST可以作为我们的对比算法，下游任务可以改为聚类，数据集使用的是同样的UEA数据集。对比侧重点：模型结构**
+**未完成**
 
 ## 2-TNC. Unsupervised representation learning for time series with temporal neighborhood coding (ICLR'21)
 
 源码链接：https://github.com/sanatonek/TNC_representation_learning
 
-**TNC在训练时，可以无监督训练模型。损失函数是修改后的Triplet Loss。对比侧重点：正负样本采样策略**
+**Config 未完成**
 
 ## 3-TSTCC. Time-Series Representation Learning via Temporal and Contextual Contrasting (TS-TCC IJCAI'21)
 
 代码链接：https://github.com/emadeldeen24/TS-TCC
 
-**Transformer + 对比学习。对比侧重点：模型结构 + 数据增强采样策略 + 损失函数**
+**已完成**
 
 ## 4. ReTriM: Reconstructive Triplet Loss for Learning Reduced Embeddings for Multi-Variate Time Series (ReTriM ICDMW'21)
 
-传感器网络的进步已经允许捕获分布在多个传感器上的复杂模式（随着时间的推移），从而生成多变量时间序列 (MVTS)。现实世界的时间序列通常不会以最适合分类等分析任务的形式表示。 AutoEncoders (AEs) 是一种无监督机制，在学习低维嵌入方面显示出了希望，因此，类关联在学习的嵌入中变得难以处理。对比学习 (CL) 表明，人们可以学习基于距离的类感知嵌入，如果它们属于同一类，则可以最大化嵌入之间的距离，如果它们不属于同一类，则可以最小化距离。这导致表示是有损的，即来自输入的一些信息丢失了。基于这些观察，本文提出了 ReTriM 框架，用于将多变量时间序列映射到向量化嵌入。 ReTriM 观察到，当使用一种推动两者的混合策略进行学习时，可以学习一种独立于分类器模型的通用嵌入，保留来自原始输入的信息并在类之间进行分离。如实验评估所示，对于 10 个基准多变量时间序列，ReTriM 可以优于仅使用 CL 和 AE 对各种分类器（例如 MLP、One-Shot Classifier、SVM、KNN1、随机森林和 Logistic 回归）学习的嵌入数据集。
-
 代码链接：无
+
+**已完成**
 
 **虽然下游任务是分类，但是模型在训练过程中是无监督的。对比侧重点：模型结构 + 正负样本采样策略 + 损失函数**
 

@@ -10,13 +10,13 @@ import torch.nn.functional as F
 
 from sklearn.cluster import KMeans
 
-def training_processing(data, config, encode_fn, cluster_cfg, batch_size=8, logger=None):
+def training_processing(data, config, encode_fn, cluster_cfg, logger=None):
     x_train, y_train, x_test, y_test = data
     config.in_channel = x_train.shape[1]
 
     # data processing
     trainset = Load_Dataset(x_train, config)
-    loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=batch_size, shuffle=True, drop_last=config.drop_last, num_workers=4)
+    loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=config.batch_size, shuffle=True, drop_last=config.drop_last, num_workers=4)
 
     # model
     model = base_Model(config).to(config.device)
