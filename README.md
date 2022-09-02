@@ -12,9 +12,7 @@
 
 **TNC在训练时，可以无监督训练模型。损失函数是修改后的Triplet Loss。对比侧重点：正负样本采样策略**
 
-## 3. Time-Series Representation Learning via Temporal and Contextual Contrasting (TS-TCC IJCAI'21)
-
-从具有时间动态的未标记时间序列数据中学习体面的表示是一项非常具有挑战性的任务。在本文中，我们提出了一种通过时间和上下文对比 (TS-TCC) 的无监督时间序列表示学习框架，以从未标记的数据中学习时间序列表示。首先，通过使用弱增强和强增强将原始时间序列数据转换为两个不同但相关的视图。其次，我们提出了一种新的时间对比模块，通过设计一个艰难的跨视图预测任务来学习鲁棒的时间表示。最后，为了进一步学习判别表示，我们提出了一个基于时间对比模块的上下文的上下文对比模块。它试图最大化同一样本的不同上下文之间的相似性，同时最小化不同样本的上下文之间的相似性。已经在三个真实世界的时间序列数据集上进行了实验。结果表明，在我们提出的 TS-TCC 学习的特征之上训练线性分类器的性能与监督训练相当。此外，我们提出的 TS-TCC 在少标记数据和迁移学习场景中显示出高效率。
+## 3-TSTCC. Time-Series Representation Learning via Temporal and Contextual Contrasting (TS-TCC IJCAI'21)
 
 代码链接：https://github.com/emadeldeen24/TS-TCC
 
