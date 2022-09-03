@@ -101,7 +101,7 @@ def training_processing(data, config, encode_fn, cluster_cfg, logger=None):
     test_pred = km.labels_
     test_true = y_test
     result = cluster_cfg.metrics(test_pred, test_true)
-    logger("最终精度为：{}".format(epoch + 1, result))
+    logger("最终精度为：{}".format(result))
 
 
 
