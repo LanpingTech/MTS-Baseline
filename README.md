@@ -32,17 +32,13 @@
 
 代码链接：https://github.com/yuezhihan/ts2vec
 
-~~本项目地址：[TS2Vec](TS2Vec/)~~
-
-**未完成**
+本项目地址：[TS2Vec](TS2Vec/)
 
 ## 6. TSCTS: Time Series Representation Learning with Contrastive Triplet Selection (CODS-COMAD'22)
 
 代码链接：无
 
-~~本项目地址：[TSCTS](TSCTS/)~~
-
-**未誊写**
+本项目地址：[TSCTS](TSCTS/)
 
 
 
