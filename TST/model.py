@@ -198,70 +198,42 @@ class TSTransformerEncoder(nn.Module):
         output = self.output_layer(output)  # (batch_size, seq_length, feat_dim)
 
         return output
-class TSTransformerEncoderClassiregressor(nn.Module):
+
+class MaskedMSELoss(nn.Module):
+    """ Masked MSE Loss
     """
-    Simplest classifier/regressor. Can be either regressor or classifier because the output does not include
-    softmax. Concatenates final layer embeddings and uses 0s to ignore padding embeddings in final output layer.
-    """
 
-    def __init__(self, feat_dim, max_len, d_model, n_heads, num_layers, dim_feedforward, num_classes,
-                 dropout=0.1, pos_encoding='fixed', activation='gelu', norm='LayerNorm', freeze=False):
-        super(TSTransformerEncoderClassiregressor, self).__init__()
+    def __init__(self, reduction: str = 'mean'):
 
-        self.max_len = max_len
-        self.d_model = d_model
-        self.n_heads = n_heads
+        super().__init__()
 
-        self.project_inp = nn.Linear(feat_dim, d_model)
-        self.pos_enc = get_pos_encoder(pos_encoding)(d_model, dropout=dropout*(1.0 - freeze), max_len=max_len)
+        self.reduction = reduction
+        self.mse_loss = nn.MSELoss(reduction=self.reduction)
 
-        if norm == 'LayerNorm':
-            encoder_layer = TransformerEncoderLayer(d_model, self.n_heads, dim_feedforward, dropout*(1.0 - freeze), activation=activation)
-        else:
-            encoder_layer = TransformerBatchNormEncoderLayer(d_model, self.n_heads, dim_feedforward, dropout*(1.0 - freeze), activation=activation)
-
-        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers)
-
-        self.act = _get_activation_fn(activation)
-
-        self.dropout1 = nn.Dropout(dropout)
-
-        self.feat_dim = feat_dim
-        self.num_classes=num_classes
-        
-        self.output_layer = self.build_output_module(d_model, max_len, num_classes)
-
-    def build_output_module(self, d_model, max_len, num_classes):
-        output_layer = nn.Linear(d_model * max_len, num_classes)
-        # no softmax (or log softmax), because CrossEntropyLoss does this internally. If probabilities are needed,
-        # add F.log_softmax and use NLLoss
-        return output_layer
-
-    def forward(self, X, padding_masks):
-        """
+    def forward(self,
+                y_pred: torch.Tensor, y_true: torch.Tensor, mask: torch.BoolTensor) -> torch.Tensor:
+        """Compute the loss between a target value and a prediction.
         Args:
-            X: (batch_size, seq_length, feat_dim) torch tensor of masked features (input)
-            padding_masks: (batch_size, seq_length) boolean tensor, 1 means keep vector at this position, 0 means padding
-        Returns:
-            output: (batch_size, num_classes)
+            y_pred: Estimated values
+            y_true: Target values
+            mask: boolean tensor with 0s at places where values should be ignored and 1s where they should be considered
+        Returns
+        -------
+        if reduction == 'none':
+            (num_active,) Loss for each active batch element as a tensor with gradient attached.
+        if reduction == 'mean':
+            scalar mean loss over batch as a tensor with gradient attached.
         """
 
-        # permute because pytorch convention for transformers is [seq_length, batch_size, feat_dim]. padding_masks [batch_size, feat_dim]
-        inp = X.permute(1, 0, 2)
-        inp = self.project_inp(inp) * math.sqrt(
-            self.d_model)  # [seq_length, batch_size, d_model] project input vectors to d_model dimensional space
-        inp = self.pos_enc(inp)  # add positional encoding
-        # NOTE: logic for padding masks is reversed to comply with definition in MultiHeadAttention, TransformerEncoderLayer
-        output = self.transformer_encoder(inp, src_key_padding_mask=~padding_masks)  # (seq_length, batch_size, d_model)
-        output = self.act(output)  # the output transformer encoder/decoder embeddings don't include non-linearity
-        output = output.permute(1, 0, 2)  # (batch_size, seq_length, d_model)
-        output = self.dropout1(output)
+        # for this particular loss, one may also elementwise multiply y_pred and y_true with the inverted mask
+        masked_pred = torch.masked_select(y_pred, mask)
+        masked_true = torch.masked_select(y_true, mask)
 
-        # Output
-        output = output * padding_masks.unsqueeze(-1)  # zero-out padding embeddings
-        output = output.reshape(output.shape[0], -1)  # (batch_size, seq_length * d_model)
-        output = self.output_layer(output)  # (batch_size, num_classes)
-        
+        return self.mse_loss(masked_pred, masked_true)
 
-        return output
+def l2_reg_loss(model):
+    """Returns the squared L2 norm of output layer of given model"""
 
+    for name, param in model.named_parameters():
+        if name == 'output_layer.weight':
+            return torch.sum(torch.square(param))

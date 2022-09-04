@@ -1,0 +1,22 @@
+{
+    "n_clusters": 8,
+    "batch_size": 32,
+    "channels": 40,
+    "compared_length": null,
+    "depth": 10,
+    "pretrain_epochs": 10,
+    "epochs": 50,
+    "in_channels": 3,
+    "kernel_size": 3,
+    "penalty": null,
+    "early_stopping": null,
+    "lr": 0.001,
+    "nb_random_samples": 10,
+    "negative_penalty": 1,
+    "out_channels": 320,
+    "reduced_size": 160,
+    "n_init": 10,
+    "tol": 0.001,
+    "patience": 5,
+    "sh_score": 0.6
+}

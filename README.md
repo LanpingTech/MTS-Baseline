@@ -12,9 +12,7 @@
 
 源码链接：https://github.com/sanatonek/TNC_representation_learning
 
-~~本项目地址：[TNC](TNC/)~~
-
-**Config 未完成**
+本项目地址：[TNC](TNC/)
 
 ## 3. TSTCC: Time-Series Representation Learning via Temporal and Contextual Contrasting (IJCAI'21)
 

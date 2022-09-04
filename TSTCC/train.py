@@ -10,9 +10,8 @@ import torch.nn.functional as F
 
 from sklearn.cluster import KMeans
 
-def training_processing(data, config, encode_fn, cluster_cfg, logger=None):
+def training_processing(data, config:Config, cluster_cfg, logger=None):
     x_train, y_train, x_test, y_test = data
-    config.in_channel = x_train.shape[1]
 
     # data processing
     trainset = Load_Dataset(x_train, config)
@@ -69,21 +68,35 @@ def training_processing(data, config, encode_fn, cluster_cfg, logger=None):
         epoch_end=time.time()
         logger('Epoch: {}, time: {}'.format(epoch + 1, epoch_end - epoch_start))
 
-        features = encode_fn(model, x_test)
-        km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_clusters, n_jobs=-1).fit(features)
+        features = encode(model, x_test, config)
+        km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_init, n_jobs=-1).fit(features)
         test_pred = km.labels_
         test_true = y_test
         result = cluster_cfg.metrics(test_pred, test_true)
         logger("第{}Epoch的精度为：{}".format(epoch + 1, result))
 
-    features = encode_fn(model, x_test)
-    km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_clusters, n_jobs=-1).fit(features)
+    features = encode(model, x_test, config)
+    km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_init, n_jobs=-1).fit(features)
     test_pred = km.labels_
     test_true = y_test
     result = cluster_cfg.metrics(test_pred, test_true)
     logger("最终精度为：{}".format(result))
 
+def encode(model, X, config:Config):
+    test = torch.utils.data.TensorDataset(torch.from_numpy(X).to(torch.float))
+    test_generator = torch.utils.data.DataLoader(test, batch_size=config.batch_size)
+    features = np.zeros((np.shape(X)[0], config.output_channels))
+    model = model.eval()
 
+    count = 0
+    with torch.no_grad():
+        for batch in test_generator:
+            batch = batch.to(config.device)
+            features[
+            count * config.batch_size: (count + 1) * config.batch_size
+            ] = model(batch).cpu()
+            count += 1
+    return features
 
         
 

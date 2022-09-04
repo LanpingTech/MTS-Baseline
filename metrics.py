@@ -1,6 +1,13 @@
 import numpy as np
 from sklearn import metrics
-# from sklearn.utils.linear_assignment_ import linear_assignment
+
+class ClusterConfig(object):
+    def __init__(self, n_clusters, n_init=10):
+        self.n_clusters = n_clusters
+        self.n_init = n_init
+
+    def metrics(self, pred, true):
+        return cluster_evaluation(true, pred)
 
 
 def cluster_acc(y_true, y_pred):

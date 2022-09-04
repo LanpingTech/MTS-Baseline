@@ -29,7 +29,7 @@ def get_dist(representation1, representation2):
     dist = 1 - sum1 / sum4
     return dist
 
-def training_processing(data, config, encode_fn, cluster_cfg, logger=None):
+def training_processing(data, config:Config, cluster_cfg, logger=None):
     x_train, y_train, x_test, y_test = data
     config.in_channels = x_train.shape[1]
     config.timesteps = x_train.shape[2]
@@ -39,9 +39,9 @@ def training_processing(data, config, encode_fn, cluster_cfg, logger=None):
     loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=config.batch_size, shuffle=True, drop_last=config.drop_last, num_workers=4)
 
     # model
-    encoder = Encoder(config.in_channels, config.timesteps, config.out_channels).to(config.device)
-    encoder_optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate, betas=(config.beta1, config.beta2), weight_decay=3e-4)
-    decoder = Decoder(config.in_channels, config.timesteps, config.out_channels).to(config.device)
+    encoder = Encoder(config.in_channels, config.timesteps, config.output_channels).to(config.device)
+    encoder_optimizer = torch.optim.Adam(encoder.parameters(), lr=config.learning_rate, betas=(config.beta1, config.beta2), weight_decay=3e-4)
+    decoder = Decoder(config.in_channels, config.timesteps, config.output_channels).to(config.device)
     decoder_optimizer = torch.optim.Adam(decoder.parameters(), lr=config.learning_rate, betas=(config.beta1, config.beta2), weight_decay=3e-4)
 
     # loss function
@@ -89,21 +89,35 @@ def training_processing(data, config, encode_fn, cluster_cfg, logger=None):
         epoch_end=time.time()
         logger('Epoch: {}, time: {}'.format(epoch + 1, epoch_end - epoch_start))
 
-        features = encode_fn(encoder, x_test)
+        features = encode(encoder, x_test, config)
         km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_clusters, n_jobs=-1).fit(features)
         test_pred = km.labels_
         test_true = y_test
         result = cluster_cfg.metrics(test_pred, test_true)
         logger("第{}Epoch的精度为：{}".format(epoch + 1, result))
 
-    features = encode_fn(encoder, x_test)
+    features = encode(encoder, x_test, config)
     km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_clusters, n_jobs=-1).fit(features)
     test_pred = km.labels_
     test_true = y_test
     result = cluster_cfg.metrics(test_pred, test_true)
     logger("最终精度为：{}".format(result))
 
+def encode(model, X, config:Config):
+    test = torch.utils.data.TensorDataset(torch.from_numpy(X).to(torch.float))
+    test_generator = torch.utils.data.DataLoader(test, batch_size=config.batch_size)
+    features = np.zeros((np.shape(X)[0], config.output_channels))
+    model = model.eval()
 
+    count = 0
+    with torch.no_grad():
+        for batch in test_generator:
+            batch = batch.to(config.device)
+            features[
+            count * config.batch_size: (count + 1) * config.batch_size
+            ] = model(batch).cpu()
+            count += 1
+    return features
 
         
 

@@ -88,14 +88,14 @@ class base_Model(nn.Module):
         )
 
         self.conv_block3 = nn.Sequential(
-            nn.Conv1d(64, configs.final_out_channels, kernel_size=8, stride=1, bias=False, padding=4),
-            nn.BatchNorm1d(configs.final_out_channels),
+            nn.Conv1d(64, configs.output_channels, kernel_size=8, stride=1, bias=False, padding=4),
+            nn.BatchNorm1d(configs.output_channels),
             nn.ReLU(),
             nn.MaxPool1d(kernel_size=2, stride=2, padding=1),
         )
 
         model_output_dim = configs.features_len
-        self.logits = nn.Linear(model_output_dim * configs.final_out_channels, configs.num_classes)
+        self.logits = nn.Linear(model_output_dim * configs.output_channels, configs.num_classes)
 
     def forward(self, x_in):
         x = self.conv_block1(x_in)
@@ -216,17 +216,17 @@ class Seq_Transformer(nn.Module):
 class TC(nn.Module):
     def __init__(self, configs, device):
         super(TC, self).__init__()
-        self.num_channels = configs.final_out_channels
+        self.num_channels = configs.output_channels
         self.timestep = configs.TC.timesteps
         self.Wk = nn.ModuleList([nn.Linear(configs.TC.hidden_dim, self.num_channels) for i in range(self.timestep)])
         self.lsoftmax = nn.LogSoftmax()
         self.device = device
         
         self.projection_head = nn.Sequential(
-            nn.Linear(configs.TC.hidden_dim, configs.final_out_channels // 2),
-            nn.BatchNorm1d(configs.final_out_channels // 2),
+            nn.Linear(configs.TC.hidden_dim, configs.output_channels // 2),
+            nn.BatchNorm1d(configs.output_channels // 2),
             nn.ReLU(inplace=True),
-            nn.Linear(configs.final_out_channels // 2, configs.final_out_channels // 4),
+            nn.Linear(configs.output_channels // 2, configs.output_channels // 4),
         )
 
         self.seq_transformer = Seq_Transformer(patch_size=self.num_channels, dim=configs.TC.hidden_dim, depth=4, heads=4, mlp_dim=64)

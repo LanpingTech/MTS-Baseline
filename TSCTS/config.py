@@ -4,16 +4,18 @@ class Config(object):
     def __init__(self):
         # model configs
         self.input_channels = 9
-        self.kernel_size = 8
-        self.stride = 1
-        self.final_out_channels = 128
+        self.channels = 40
+        self.depth = 5
+        self.reduced_size = 160
+        self.output_channels = 320
+        self.kernel_size = 3
 
-        self.num_classes = 6
-        self.dropout = 0.35
-        self.features_len = 18
+        self.windows = 16
+        self.theta = 0.5
+        self.nb_random_samples = 8
 
         # training configs
-        self.epochs = 40
+        self.epochs = 30
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         # optimizer parameters
@@ -24,26 +26,3 @@ class Config(object):
         # data parameters
         self.drop_last = True
         self.batch_size = 128
-
-        self.Context_Cont = Context_Cont_configs()
-        self.TC = TC()
-        self.augmentation = augmentations()
-
-
-class augmentations(object):
-    def __init__(self):
-        self.jitter_scale_ratio = 1.1
-        self.jitter_ratio = 0.8
-        self.max_seg = 8
-
-
-class Context_Cont_configs(object):
-    def __init__(self):
-        self.temperature = 0.2
-        self.use_cosine_similarity = True
-
-
-class TC(object):
-    def __init__(self):
-        self.hidden_dim = 100
-        self.timesteps = 6

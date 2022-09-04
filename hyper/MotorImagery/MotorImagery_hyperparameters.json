@@ -1,0 +1,16 @@
+{
+    "n_clusters": 2,
+    "batch_size": 8,
+    "channels": 40,
+    "compared_length": null,
+    "depth": 12,
+    "epochs": 30,
+    "in_channels": 64,
+    "kernel_size": 3,
+    "lr": 0.001,
+    "nb_random_samples": 10,
+    "negative_penalty": 1,
+    "out_channels": 320,
+    "reduced_size": 160,
+    "n_init": 10
+}
