@@ -69,7 +69,7 @@ def SIM(train, train_size, x_ref, s_ref, s, samples):
         #print(Sil.shape)
         #print(x_ref)
          
-        dist=pairwise_distances(np.array(Sil),x_ref)
+        dist=pairwise_distances(np.array(Sil), x_ref)
        
         # 距离最近/远的Sil的片段的索引起点j
         index1 = dist.argmin()
@@ -92,6 +92,7 @@ class TripletSelection:
         self.theta = theta
 
     def __call__(self, batch, train, samples):
+        batch = batch[0]
         batch_size, input_dim, time_steps = batch.shape
         train_size,_,_ = train.shape
         length = time_steps  # 时间步长

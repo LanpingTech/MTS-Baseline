@@ -3,7 +3,7 @@ import torch
 class Config(object):
     def __init__(self):
         # model configs
-        self.out_channels = 10
+        self.out_channels = 320
 
         # training configs
         self.epochs = 30

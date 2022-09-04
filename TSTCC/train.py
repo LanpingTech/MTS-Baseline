@@ -10,12 +10,25 @@ import torch.nn.functional as F
 
 from sklearn.cluster import KMeans
 
+def conv_out_size(x, k, s, p):
+    return (x - k + 2 * p) // s + 1
+
+def pool_out_size(x, k, s, p):
+    return (x - k + 2 * p) // s + 1
+
+def get_out_len(x, config:Config):
+    x = conv_out_size(x, config.kernel_size, config.stride, config.kernel_size // 2)
+    x = pool_out_size(x, 2, 2, 1)
+    return x
+
 def training_processing(data, config:Config, cluster_cfg, logger=None):
     x_train, y_train, x_test, y_test = data
+    seq_len = x_train.shape[2]
+    config.features_len = get_out_len(get_out_len(get_out_len(seq_len, config), config), config)
 
     # data processing
     trainset = Load_Dataset(x_train, config)
-    loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=config.batch_size, shuffle=True, num_workers=4)
+    loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=config.batch_size, shuffle=True, num_workers=4, drop_last=True)
 
     # model
     model = base_Model(config).to(config.device)
@@ -85,7 +98,7 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
 def encode(model, X, config:Config):
     test = torch.utils.data.TensorDataset(torch.from_numpy(X).to(torch.float))
     test_generator = torch.utils.data.DataLoader(test, batch_size=config.batch_size)
-    features = np.zeros((np.shape(X)[0], config.output_channels))
+    features = np.zeros((np.shape(X)[0], config.output_channels * config.features_len))
     model = model.eval()
 
     count = 0
@@ -94,7 +107,7 @@ def encode(model, X, config:Config):
             batch = batch[0].to(config.device)
             features[
             count * config.batch_size: (count + 1) * config.batch_size
-            ] = model(batch).cpu()
+            ] = model.predict(batch).cpu()
             count += 1
     return features
 

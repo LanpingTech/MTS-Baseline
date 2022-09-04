@@ -1,4 +1,4 @@
-from .model import Encoder, Decoder
+from .model import Encoder
 from .dataset import TripletSelection
 from .config import Config
 
@@ -30,11 +30,11 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
 
         for batch_idx, batch in enumerate(loader):
             loss = 0
-            pos_samples, neg_samples,ref_samples = triplet_selection(batch, x_train, config.nb_random_samples)
+            pos_samples, neg_samples, ref_samples = triplet_selection(batch, x_train, config.nb_random_samples)
 
             encoder_optimizer.zero_grad()
 
-            for i in range(config.batch_size):
+            for i in range(len(ref_samples)):
                 ref = ref_samples[i].to(config.device)
                 pos_list = pos_samples[i]
                 neg_list = neg_samples[i]

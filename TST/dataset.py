@@ -180,12 +180,17 @@ def collate_unsuperv_eval(data, max_len=None):
     batch_size = len(data)
 
     # Stack and pad features and masks (convert 2D to 3D tensors, i.e. add batch dimension)
-    lengths = [X.shape[0] for X in data]  # original sequence length for each time series
+    lengths = [X[0].shape[0] for X in data]  # original sequence length for each time series
     if max_len is None:
         max_len = max(lengths)
 
+    X = torch.zeros(batch_size, max_len, data[0][0].shape[-1])
+    for i in range(batch_size):
+        end = min(lengths[i], max_len)
+        X[i, :end, :] = data[i][0][:end, :]
+
     padding_masks = padding_mask(torch.tensor(lengths, dtype=torch.int16), max_len=max_len)  # (batch_size, padded_length) boolean tensor, "1" means keep
-    return data, padding_masks
+    return X, padding_masks
 
 def padding_mask(lengths, max_len=None):
     """

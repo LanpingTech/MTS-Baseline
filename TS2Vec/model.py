@@ -325,7 +325,7 @@ class TS2Vec:
             if verbose:
                 logger('Epoch: {}, time: {}'.format(self.n_epochs + 1, epoch_end - epoch_start))
                 features = self.encode(val_data, encoding_window='full_series')
-                km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_clusters, n_jobs=-1).fit(features)
+                km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_clusters).fit(features)
                 test_pred = km.labels_
                 test_true = val_label
                 result = cluster_cfg.metrics(test_pred, test_true)

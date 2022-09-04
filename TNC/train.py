@@ -79,7 +79,7 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
 def encode(model, X, config:Config):
     test = torch.utils.data.TensorDataset(torch.from_numpy(X).to(torch.float))
     test_generator = torch.utils.data.DataLoader(test, batch_size=config.batch_size)
-    features = np.zeros((np.shape(X)[0], config.output_channels))
+    features = np.zeros((np.shape(X)[0], config.encoding_size))
     model = model.eval()
 
     count = 0

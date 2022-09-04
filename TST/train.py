@@ -82,7 +82,7 @@ def encode(model, X, config:Config):
     test = torch.utils.data.TensorDataset(torch.from_numpy(X).to(torch.float))
     test_generator = torch.utils.data.DataLoader(test, batch_size=config.batch_size, 
                                                  collate_fn=lambda x: collate_unsuperv_eval(x, max_len=config.timesteps))
-    features = np.zeros((np.shape(X)[0], config.output_channels))
+    features = np.zeros((np.shape(X)[0], config.d_model * config.timesteps))
     model = model.eval()
 
     count = 0
@@ -93,7 +93,7 @@ def encode(model, X, config:Config):
             padding_masks = padding_masks.to(config.device)
             features[
             count * config.batch_size: (count + 1) * config.batch_size
-            ] = model(X, padding_masks).cpu()
+            ] = model.predict(X, padding_masks).cpu()
             count += 1
     return features
 

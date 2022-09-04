@@ -3,7 +3,7 @@ import torch
 class Config(object):
     def __init__(self):
         self.mc_sample_size = 40
-        self.window_size = 50
+        self.window_size = 10
         self.w = 0.05
         self.augmentation = 5
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'

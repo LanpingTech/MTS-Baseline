@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     selected_data_name = ['ArticularyWordRecognition']
 
-    model_name = 'ReTriM'
+    model_name = 'TSCTS'
 
     for data_name in selected_data_name:
 

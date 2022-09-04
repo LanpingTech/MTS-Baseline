@@ -199,6 +199,20 @@ class TSTransformerEncoder(nn.Module):
 
         return output
 
+    def predict(self, X, padding_masks):
+        inp = X.permute(1, 0, 2)
+        inp = self.project_inp(inp) * math.sqrt(
+            self.d_model)  # [seq_length, batch_size, d_model] project input vectors to d_model dimensional space
+        inp = self.pos_enc(inp)  # add positional encoding
+        # NOTE: logic for padding masks is reversed to comply with definition in MultiHeadAttention, TransformerEncoderLayer
+        output = self.transformer_encoder(inp, src_key_padding_mask=~padding_masks)  # (seq_length, batch_size, d_model)
+        output = self.act(output)  # the output transformer encoder/decoder embeddings don't include non-linearity
+        output = output.permute(1, 2, 0)  # (batch_size, d_model, seq_length)
+        # output = F.adaptive_avg_pool1d(output, 1).squeeze(-1)  # (batch_size, d_model)
+        output = output.view(output.shape[0], -1)  # (batch_size, seq_length * d_model)
+        return output
+
+
 class MaskedMSELoss(nn.Module):
     """ Masked MSE Loss
     """
