@@ -9,6 +9,7 @@ class Config(object):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.encoding_size = 320
 
+        self.batch_size = 8
         self.learning_rate = 1e-3
         self.decay=0.005
         self.epochs = 30

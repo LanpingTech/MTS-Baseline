@@ -161,6 +161,32 @@ def collate_unsuperv(data, max_len=None, mask_compensation=False):
     target_masks = ~target_masks  # inverse logic: 0 now means ignore, 1 means predict
     return X, targets, target_masks, padding_masks
 
+def collate_unsuperv_eval(data, max_len=None):
+    """Build mini-batch tensors from a list of (X, mask) tuples. Mask input. Create
+    Args:
+        data: len(batch_size) list of tuples (X, mask).
+            - X: torch tensor of shape (seq_length, feat_dim); variable seq_length.
+            - mask: boolean torch tensor of shape (seq_length, feat_dim); variable seq_length.
+        max_len: global fixed sequence length. Used for architectures requiring fixed length input,
+            where the batch length cannot vary dynamically. Longer sequences are clipped, shorter are padded with 0s
+    Returns:
+        X: (batch_size, padded_length, feat_dim) torch tensor of masked features (input)
+        targets: (batch_size, padded_length, feat_dim) torch tensor of unmasked features (output)
+        target_masks: (batch_size, padded_length, feat_dim) boolean torch tensor
+            0 indicates masked values to be predicted, 1 indicates unaffected/"active" feature values
+        padding_masks: (batch_size, padded_length) boolean tensor, 1 means keep vector at this position, 0 ignore (padding)
+    """
+
+    batch_size = len(data)
+
+    # Stack and pad features and masks (convert 2D to 3D tensors, i.e. add batch dimension)
+    lengths = [X.shape[0] for X in data]  # original sequence length for each time series
+    if max_len is None:
+        max_len = max(lengths)
+
+    padding_masks = padding_mask(torch.tensor(lengths, dtype=torch.int16), max_len=max_len)  # (batch_size, padded_length) boolean tensor, "1" means keep
+    return data, padding_masks
+
 def padding_mask(lengths, max_len=None):
     """
     Used to mask padded positions: creates a (batch_size, max_len) boolean mask from a tensor of sequence lengths,
@@ -172,3 +198,4 @@ def padding_mask(lengths, max_len=None):
             .type_as(lengths)
             .repeat(batch_size, 1)
             .lt(lengths.unsqueeze(1)))
+

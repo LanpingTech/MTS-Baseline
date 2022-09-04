@@ -15,7 +15,7 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
 
     # data processing
     trainset = TNCDataset(x=torch.Tensor(x_train), mc_sample_size=config.mc_sample_size, window_size=config.window_size, augmentation=config.augmentation, adf=True)
-    loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=3)
+    loader = torch.utils.data.DataLoader(trainset, batch_size=config.batch_size, shuffle=True, num_workers=3)
 
     # model
     encoder = RnnEncoder(hidden_size=100, in_channel=in_channel, encoding_size=config.encoding_size, device=config.device).to(config.device)
