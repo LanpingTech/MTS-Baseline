@@ -59,6 +59,10 @@ if __name__ == '__main__':
 
         training_func = getattr(importlib.import_module(model_name + '.train'), 'training_processing')
         training_func(data, config, cluster_cfg, logger)
+        logger('=' * 50)
+        logger(' ')
+        logger(' ')
+
 
 
 
