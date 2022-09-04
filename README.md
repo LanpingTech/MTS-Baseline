@@ -4,9 +4,7 @@
 
 源码链接：https://github.com/gzerveas/mvts_transformer
 
-~~本项目地址：[TST](TST/)~~
-
-**未完成**
+本项目地址：[TST](TST/)
 
 ## 2. TNC: Unsupervised representation learning for time series with temporal neighborhood coding (ICLR'21)
 

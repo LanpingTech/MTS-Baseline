@@ -29,7 +29,7 @@ def load_data(data_name):
 
 def get_logger(model_name, data_name):
     def logger(logstr):
-        result_file_open = open(model_name + '/' + data_name + '.log', 'a')
+        result_file_open = open(model_name + '/log/' + data_name + '.log', 'a')
         result_file_open.write(logstr+'\n')
         result_file_open.close()
     return logger
