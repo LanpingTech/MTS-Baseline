@@ -9,7 +9,7 @@ import torch.nn.functional as F
 
 from sklearn.cluster import KMeans
 
-def training_processing(data, config, encode_fn, cluster_cfg, logger=None):
+def training_processing(data, config, cluster_cfg, logger=None):
     x_train, y_train, x_test, y_test = data
     config.in_channels = x_train.shape[1]
     config.timesteps = x_train.shape[2]

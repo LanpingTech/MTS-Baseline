@@ -22,7 +22,6 @@ class Config(object):
         self.learning_rate = 3e-4
 
         # data parameters
-        self.drop_last = True
         self.batch_size = 128
 
         self.Context_Cont = Context_Cont_configs()

@@ -15,7 +15,7 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
 
     # data processing
     trainset = torch.utils.data.TensorDataset(torch.from_numpy(x_train).to(torch.float))
-    loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=config.batch_size, shuffle=True, drop_last=config.drop_last, num_workers=4)
+    loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=config.batch_size, shuffle=True, num_workers=4)
     triplet_selection = TripletSelection(config.windows, config.theta)
 
     # model
@@ -63,14 +63,14 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
         logger('Epoch: {}, time: {}'.format(epoch + 1, epoch_end - epoch_start))
 
         features = encode(encoder, x_test, config)
-        km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_init, n_jobs=-1).fit(features)
+        km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_init).fit(features)
         test_pred = km.labels_
         test_true = y_test
         result = cluster_cfg.metrics(test_pred, test_true)
         logger("第{}Epoch的精度为：{}".format(epoch + 1, result))
 
     features = encode(encoder, x_test, config)
-    km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_init, n_jobs=-1).fit(features)
+    km = KMeans(n_clusters=cluster_cfg.n_clusters, n_init=cluster_cfg.n_init).fit(features)
     test_pred = km.labels_
     test_true = y_test
     result = cluster_cfg.metrics(test_pred, test_true)
@@ -85,7 +85,7 @@ def encode(model, X, config:Config):
     count = 0
     with torch.no_grad():
         for batch in test_generator:
-            batch = batch.to(config.device)
+            batch = batch[0].to(config.device)
             features[
             count * config.batch_size: (count + 1) * config.batch_size
             ] = model(batch).cpu()

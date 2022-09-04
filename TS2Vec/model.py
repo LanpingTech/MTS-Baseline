@@ -255,7 +255,7 @@ class TS2Vec:
         train_data = train_data[~np.isnan(train_data).all(axis=2).all(axis=1)]
         
         train_dataset = TensorDataset(torch.from_numpy(train_data).to(torch.float))
-        train_loader = DataLoader(train_dataset, batch_size=min(self.batch_size, len(train_dataset)), shuffle=True, drop_last=True)
+        train_loader = DataLoader(train_dataset, batch_size=min(self.batch_size, len(train_dataset)), shuffle=True)
         
         optimizer = torch.optim.AdamW(self._net.parameters(), lr=self.lr)
         
