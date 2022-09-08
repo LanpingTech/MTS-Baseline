@@ -8,7 +8,7 @@ def set_triplets_batch(batch):
     Xa = np.empty((0, input_dim, time_steps))
     Xp = np.empty((0, input_dim, time_steps))
     Xn = np.empty((0, input_dim, time_steps))
-    Xb=batch.reshape(batch_size,-1)
+    Xb = batch.reshape(batch_size, -1) 
     dist = pairwise_distances(Xb)
     for i in range(batch_size):
         j = dist[i, :].argmax()  # 最大索引
@@ -16,7 +16,6 @@ def set_triplets_batch(batch):
         Xa= np.concatenate((Xa, batch[i:i + 1]), axis=0)
         Xp= np.concatenate((Xp, batch[j:j + 1]), axis=0)
         Xn= np.concatenate((Xn, batch[k:k + 1]), axis=0)
-        
     return Xa, Xp, Xn
    
 class TSDataset(torch.utils.data.Dataset):

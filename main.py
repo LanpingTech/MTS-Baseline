@@ -1,6 +1,6 @@
 import os
 from select import select
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 import importlib
 import json
 
@@ -31,6 +31,7 @@ def get_logger(model_name, data_name):
     def logger(logstr):
         result_file_open = open(model_name + '/log/' + data_name + '.log', 'a')
         result_file_open.write(logstr+'\n')
+        print(logstr)
         result_file_open.close()
     return logger
 
@@ -40,11 +41,23 @@ if __name__ == '__main__':
 
     data_names = ['ArticularyWordRecognition', 'AtrialFibrillation', 'BasicMotions', 'CharacterTrajectories', 'Cricket', 'DuckDuckGeese', 'EigenWorms', 'Epilepsy', 'ERing','EthanolConcentration', 'FaceDetection', 'FingerMovements', 'HandMovementDirection', 'Handwriting', 'Heartbeat', 'InsectWingbeat', 'JapaneseVowels', 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2', 'SpokenArabicDigits', 'StandWalkJump', 'UWaveGestureLibrary']
 
-    selected_data_name = ['ArticularyWordRecognition']
+    TST = ['EigenWorms'] # o
 
-    model_name = 'TSCTS'
+    TNC = ['DuckDuckGeese', 'EigenWorms', 'Epilepsy', 'ERing','EthanolConcentration', 'FaceDetection', 'FingerMovements', 'HandMovementDirection', 'Handwriting', 'Heartbeat', 'InsectWingbeat', 'JapaneseVowels', 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2', 'SpokenArabicDigits', 'StandWalkJump', 'UWaveGestureLibrary']#gpu1
 
-    for data_name in selected_data_name:
+    TSTCC = ['InsectWingbeat', 'JapaneseVowels', 'PenDigits', 'PhonemeSpectra', 'RacketSports'] # o
+
+    ReTriM = ['EigenWorms', 'Epilepsy', 'EthanolConcentration', 'FaceDetection', 'HandMovementDirection', 'Heartbeat', 'InsectWingbeat', 'Libras', 'NATOPS', 'RacketSports', 'SelfRegulationSCP2', 'StandWalkJump'] #  o
+    
+    TestData=['Epilepsy']
+    
+    TS2Vec = ['Epilepsy', 'ERing','EthanolConcentration', 'FaceDetection', 'FingerMovements', 'HandMovementDirection', 'Handwriting', 'Heartbeat', 'InsectWingbeat', 'JapaneseVowels', 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2', 'SpokenArabicDigits', 'StandWalkJump', 'UWaveGestureLibrary'] # o 'EigenWorms', 
+
+    TSCTS = ['AtrialFibrillation', 'BasicMotions', 'CharacterTrajectories', 'Cricket', 'DuckDuckGeese', 'EigenWorms', 'Epilepsy', 'ERing','EthanolConcentration', 'FaceDetection', 'FingerMovements', 'HandMovementDirection', 'Handwriting', 'Heartbeat', 'InsectWingbeat', 'JapaneseVowels', 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2', 'SpokenArabicDigits', 'StandWalkJump', 'UWaveGestureLibrary'] # gpu3
+
+    model_name = 'ReTriM'
+
+    for data_name in TestData:
 
         params = json.load(open('hyper/' + data_name + '/' + data_name + '_hyperparameters.json', 'r'))
 
@@ -52,22 +65,22 @@ if __name__ == '__main__':
         config.batch_size = params['batch_size']
         config.epochs = params['epochs']
 
+        config.depth = params['depth']
+
         cluster_cfg = ClusterConfig(params['n_clusters'], params['n_init'])
 
         data = load_data(data_name)
         logger = get_logger(model_name, data_name)
 
-        training_func = getattr(importlib.import_module(model_name + '.train'), 'training_processing')
-        training_func(data, config, cluster_cfg, logger)
+        logger(data_name)
+        try:
+            training_func = getattr(importlib.import_module(model_name + '.train'), 'training_processing')
+            training_func(data, config, cluster_cfg, logger)
+        except Exception as e:
+            continue
         logger('=' * 50)
         logger(' ')
         logger(' ')
+        torch.cuda.empty_cache()
 
-
-
-
-
-
-    
-
-
+# nohup python -u main.py > gpu0.log 2>&1 &

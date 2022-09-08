@@ -12,6 +12,7 @@ from sklearn.cluster import KMeans
 
 def training_processing(data, config:Config, cluster_cfg, logger=None):
     x_train, y_train, x_test, y_test = data
+    config.input_channels = np.shape(x_train)[1]
 
     # data processing
     trainset = torch.utils.data.TensorDataset(torch.from_numpy(x_train).to(torch.float))

@@ -12,8 +12,8 @@ from sklearn.cluster import KMeans
 
 def get_dist(representation1, representation2):
     d=representation1.shape[0]
-    size_representation=representation1.size(1)
-            
+    size_representation=representation1.size(1)        
+
     sum1 = 0
     sum2 = 0
     sum3 = 0
@@ -24,7 +24,6 @@ def get_dist(representation1, representation2):
     for i in range(d):
         sum2 = sum2 + torch.pow(representation1[i], 2)
         sum3 = sum3 + torch.pow(representation2[i], 2)
-
     sum4 = torch.bmm((torch.pow(sum2,0.5)).view(1,1,size_representation),(torch.pow(sum3,0.5)).view(1,size_representation,1))
     dist = 1 - sum1 / sum4
     return dist
@@ -36,7 +35,7 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
 
     # data processing
     trainset = TSDataset(x_train)
-    loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=config.batch_size, shuffle=True, num_workers=4)
+    loader = torch.utils.data.DataLoader(dataset=trainset, batch_size=config.batch_size, shuffle=True, num_workers=4, drop_last=True)
 
     # model
     encoder = Encoder(config.in_channels, config.timesteps, config.output_channels).to(config.device)
@@ -45,7 +44,8 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
     decoder_optimizer = torch.optim.Adam(decoder.parameters(), lr=config.learning_rate, betas=(config.beta1, config.beta2), weight_decay=3e-4)
 
     # loss function
-    loss_fn = torch.nn.L1Loss(reduce=True,size_average=True)
+    loss_fn = torch.nn.L1Loss(reduction='mean')
+    triplet_loss = torch.nn.TripletMarginLoss(margin=1.0, p=2)
 
     # training
     for epoch in range(config.epochs):
@@ -56,37 +56,34 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
 
         for batch_idx, data in enumerate(loader):
             loss = 0
-
+            
             Xa, Xp, Xn = set_triplets_batch(data)
             data = data.to(torch.float).to(config.device)
             Xa = torch.from_numpy(Xa).to(torch.float).to(config.device)
             Xp = torch.from_numpy(Xp).to(torch.float).to(config.device)
             Xn = torch.from_numpy(Xn).to(torch.float).to(config.device)
-
+           
             encoder_optimizer.zero_grad()
             decoder_optimizer.zero_grad()
 
-            representation = encoder(Xa)  # Anchors representations(8,320)
+            representation = encoder(Xa)  # Anchors representations(batch_size,output_channels)
             
             positive_representation = encoder(Xp)# Positive samples representations
             
             negative_representation = encoder(Xn)  # negative samples representations
-
-            loss_Reconstruction = loss_fn(data, decoder(encoder(data)))
-
-            pos_anchor_dist = get_dist(representation, positive_representation)
-            neg_anchor_dist = get_dist(representation, negative_representation)
             
-            margin = 1.0  # 调参
-            scaler = torch.tensor([0]).to(config.device)
-            loss_Contrastive = torch.max(scaler, margin + pos_anchor_dist - neg_anchor_dist)
+            loss_Reconstruction = loss_fn(data, decoder(encoder(data)))
+            
+            triplet_loss= torch.nn.TripletMarginWithDistanceLoss(distance_function=get_dist, margin=0.8)
+            loss_Contrastive = triplet_loss(representation, positive_representation, negative_representation)           
 
-            loss = 0.5 * loss_Reconstruction + 0.5 * loss_Contrastive
-
+            alpha = 0.5
+            loss = alpha * loss_Reconstruction + (1-alpha) * loss_Contrastive
+           
             loss.backward()
             encoder_optimizer.step()
             decoder_optimizer.step()
-
+        
         epoch_end=time.time()
         logger('Epoch: {}, time: {}'.format(epoch + 1, epoch_end - epoch_start))
 

@@ -25,6 +25,7 @@ def training_processing(data, config:Config, cluster_cfg, logger=None):
     x_train, y_train, x_test, y_test = data
     seq_len = x_train.shape[2]
     config.features_len = get_out_len(get_out_len(get_out_len(seq_len, config), config), config)
+    config.input_channels = x_train.shape[1]
 
     # data processing
     trainset = Load_Dataset(x_train, config)

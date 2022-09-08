@@ -23,10 +23,12 @@ class Encoder(torch.nn.Module):
         out = self.pool2(out)
         out = out.view(out.size(0), -1)
         out = self.linear1(out)
+        out=F.normalize(out)
         out = F.relu(out)
         out = self.linear2(out)
+        out=F.normalize(out)
         out = F.relu(out)
-        return out
+        return out  #判断一下这里输出shape
 
 class Decoder(torch.nn.Module):
     def __init__(self, in_channels, timestep, out_channels):
@@ -44,4 +46,4 @@ class Decoder(torch.nn.Module):
         out = F.relu(out)
         out = self.conv2(out)
         out = F.relu(out)
-        return out
+        return out #判断一下这里输出shape
