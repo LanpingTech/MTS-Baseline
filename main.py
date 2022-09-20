@@ -1,6 +1,6 @@
 import os
 from select import select
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 import importlib
 import json
 
@@ -43,21 +43,19 @@ if __name__ == '__main__':
 
     TST = ['EigenWorms'] # o
 
-    TNC = ['DuckDuckGeese', 'EigenWorms', 'Epilepsy', 'ERing','EthanolConcentration', 'FaceDetection', 'FingerMovements', 'HandMovementDirection', 'Handwriting', 'Heartbeat', 'InsectWingbeat', 'JapaneseVowels', 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2', 'SpokenArabicDigits', 'StandWalkJump', 'UWaveGestureLibrary']#gpu1
+    TNC = [ 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2', 'SpokenArabicDigits', 'StandWalkJump', 'UWaveGestureLibrary'] # gpu1 'InsectWingbeat', 'JapaneseVowels',
 
     TSTCC = ['InsectWingbeat', 'JapaneseVowels', 'PenDigits', 'PhonemeSpectra', 'RacketSports'] # o
 
-    ReTriM = ['EigenWorms', 'Epilepsy', 'EthanolConcentration', 'FaceDetection', 'HandMovementDirection', 'Heartbeat', 'InsectWingbeat', 'Libras', 'NATOPS', 'RacketSports', 'SelfRegulationSCP2', 'StandWalkJump'] #  o
+    ReTriM = [] #  o
     
-    TestData=['Epilepsy']
-    
-    TS2Vec = ['Epilepsy', 'ERing','EthanolConcentration', 'FaceDetection', 'FingerMovements', 'HandMovementDirection', 'Handwriting', 'Heartbeat', 'InsectWingbeat', 'JapaneseVowels', 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2', 'SpokenArabicDigits', 'StandWalkJump', 'UWaveGestureLibrary'] # o 'EigenWorms', 
+    TS2Vec = [] # o 'EigenWorms', 
 
-    TSCTS = ['AtrialFibrillation', 'BasicMotions', 'CharacterTrajectories', 'Cricket', 'DuckDuckGeese', 'EigenWorms', 'Epilepsy', 'ERing','EthanolConcentration', 'FaceDetection', 'FingerMovements', 'HandMovementDirection', 'Handwriting', 'Heartbeat', 'InsectWingbeat', 'JapaneseVowels', 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2', 'SpokenArabicDigits', 'StandWalkJump', 'UWaveGestureLibrary'] # gpu3
+    TSCTS = ['JapaneseVowels', 'Libras', 'LSST', 'MotorImagery', 'NATOPS', 'PEMS-SF', 'PenDigits', 'PhonemeSpectra', 'RacketSports', 'SelfRegulationSCP1', 'SelfRegulationSCP2'] # gpu3 'InsectWingbeat', 
 
-    model_name = 'ReTriM'
+    model_name = 'TSCTS'
 
-    for data_name in TestData:
+    for data_name in reversed(TSCTS):
 
         params = json.load(open('hyper/' + data_name + '/' + data_name + '_hyperparameters.json', 'r'))
 
@@ -83,4 +81,4 @@ if __name__ == '__main__':
         logger(' ')
         torch.cuda.empty_cache()
 
-# nohup python -u main.py > gpu0.log 2>&1 &
+# nohup python -u main.py > gpu3.log 2>&1 &
