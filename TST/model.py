@@ -14,7 +14,16 @@ def _get_activation_fn(activation):
     raise ValueError("activation should be relu/gelu, not {}".format(activation))
 
 
-# From https://github.com/pytorch/examples/blob/master/word_language_model/model.py
+class Clusterer(nn.Module):
+    def __init__(self,input_dim,output_dim):
+        super(Clusterer,self).__init__
+        self.linear=nn.Linear(input_dim,output_dim)
+    
+    def forward(self,x):
+        output=self.linear(x)
+        return output
+
+
 class FixedPositionalEncoding(nn.Module):
     r"""Inject some information about the relative or absolute position of the tokens
         in the sequence. The positional encodings have the same dimension as
@@ -168,6 +177,11 @@ class TSTransformerEncoder(nn.Module):
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers)
 
         self.output_layer = nn.Linear(d_model, feat_dim)
+        
+        # decoder 
+        self.GRU=nn.GRU(input_size=d_model,hidden_size=d_model//2,batch_size=True)
+        self.linear=nn.Linear(d_model//2,feat_dim)
+        self.decoder=torch.nn.Sequential(self.GRU,self.linear)
 
         self.act = _get_activation_fn(activation)
 

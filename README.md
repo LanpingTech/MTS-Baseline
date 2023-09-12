@@ -36,6 +36,12 @@
 
 本项目地址：[TSCTS](TSCTS/)
 
+## 7. MHCCL: Masked Hierarchical Cluster-Wise Contrastive Learning for Multivariate Time Series (AAAI'23)
+
+代码链接：https://github.com/mqwfrog/MHCCL
+
+本项目地址：[MHCCL](MHCCL/)
+
 # 数据集
 
 The basic information of data set as follows.
